@@ -130,10 +130,6 @@ static V offsetcb(rd_kafka_t *rk, rd_kafka_resp_err_t err,rd_kafka_topic_partiti
   printr0(k(0, (S) ".kfk.offsetcb", ki(indexClient(rk)), kp((S)rd_kafka_err2str(err)), decodeParList(offsets),KNL));
 }
 
-static V thrcb(rd_kafka_t *rk, const char *broker_name, int32_t broker_id, int throttle_time_ms, void *UNUSED(opaque)){
-  printr0(k(0, (S) ".kfk.throttlecb",ki(indexClient(rk)),kp((S)broker_name),ki(broker_id),ki(throttle_time_ms),KNL));
-}
-
 K decodeMsg(const rd_kafka_t*rk,const rd_kafka_message_t *msg);
 
 static V drcb(rd_kafka_t*rk,const rd_kafka_message_t *msg,V*UNUSED(opaque)){
@@ -144,13 +140,16 @@ static V drcb(rd_kafka_t*rk,const rd_kafka_message_t *msg,V*UNUSED(opaque)){
 // x - config dict sym->sym
 static K loadConf(rd_kafka_conf_t *conf, K x){
   char b[512];
+  K ConfID;
   J i;
   for(i= 0; i < xx->n; ++i){
+    if(strcmp("config.id",kS(xx)[i]))
+        ConfID=ki(1);
     if(RD_KAFKA_CONF_OK !=rd_kafka_conf_set(conf, kS(xx)[i], kS(xy)[i], b, sizeof(b))){
       return krr((S) b);
     }
   }
-  return knk(0);
+  return ConfID;
 }
 static K loadTopConf(rd_kafka_topic_conf_t *conf, K x){
   char b[512];
@@ -169,18 +168,20 @@ EXP K2(kfkClient){
   rd_kafka_t *rk;
   rd_kafka_conf_t *conf;
   char b[512];
+  K ConfID;
   if(!checkType("c!", x, y))
     return KNL;
   if('p' != xg && 'c' != xg)
     return krr("type: unknown client type");
   type= 'p' == xg ? RD_KAFKA_PRODUCER : RD_KAFKA_CONSUMER;
-  if(!loadConf(conf= rd_kafka_conf_new(), y))
+  if(!(ConfID = loadConf(conf= rd_kafka_conf_new(), y)))
     return KNL;
+  if(('c' == xg) && (1 == ConfID -> i))
+    return(krr((S)"Connecting consumers must have a non-null config.id set"));
   rd_kafka_conf_set_stats_cb(conf, statscb);
   rd_kafka_conf_set_log_cb(conf, logcb);
   rd_kafka_conf_set_dr_msg_cb(conf,drcb);
   rd_kafka_conf_set_offset_commit_cb(conf,offsetcb);
-  rd_kafka_conf_set_throttle_cb(conf, thrcb);
   if(RD_KAFKA_CONF_OK !=rd_kafka_conf_set(conf, "log.queue", "true", b, sizeof(b)))
     return krr((S) b);
   if(!(rk= rd_kafka_new(type, conf, b, sizeof(b))))
@@ -615,7 +616,6 @@ EXP K kfkCallback(I d){
     pollClient((rd_kafka_t*)kS(clients)[i], 0, consumed);
   return KNL;
 }
-
 
 static V detach(V){
   I sp,i;
