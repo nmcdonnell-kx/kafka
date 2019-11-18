@@ -140,11 +140,14 @@ static V drcb(rd_kafka_t*rk,const rd_kafka_message_t *msg,V*UNUSED(opaque)){
 // x - config dict sym->sym
 static K loadConf(rd_kafka_conf_t *conf, K x){
   char b[512];
-  K ConfID;
+  K ConfID=ki(0);
   J i;
   for(i= 0; i < xx->n; ++i){
-    if(strcmp("config.id",kS(xx)[i]))
+    if(strcmp("group.id",kS(xx)[i])==0){
         ConfID=ki(1);
+        if(strcmp("",kS(xy)[i])==0)
+          ConfID=ki(0);
+    }
     if(RD_KAFKA_CONF_OK !=rd_kafka_conf_set(conf, kS(xx)[i], kS(xy)[i], b, sizeof(b))){
       return krr((S) b);
     }
@@ -176,7 +179,7 @@ EXP K2(kfkClient){
   type= 'p' == xg ? RD_KAFKA_PRODUCER : RD_KAFKA_CONSUMER;
   if(!(ConfID = loadConf(conf= rd_kafka_conf_new(), y)))
     return KNL;
-  if(('c' == xg) && (1 == ConfID -> i))
+  if(('c' == xg) && (0 == (ConfID -> i)))
     return(krr((S)"Connecting consumers must have a non-null config.id set"));
   rd_kafka_conf_set_stats_cb(conf, statscb);
   rd_kafka_conf_set_log_cb(conf, logcb);
