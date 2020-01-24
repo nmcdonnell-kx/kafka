@@ -98,9 +98,12 @@ stats:()
 
 // statistics provided by kafka about current state (rd_kafka_conf_set_stats_cb)
 statcb:{[j]
-	s:.j.k j;if[all `ts`time in key s;s[`ts]:-10957D+`timestamp$s[`ts]*1000;s[`time]:-10957D+`timestamp$1000000000*s[`time]];
-	.kfk.stats,::enlist s;
-	delete from `.kfk.stats where i<count[.kfk.stats]-100;}
+  s:.j.k j;
+  if[all `ts`time in key s;
+    s[`ts]:-10957D+`timestamp$s[`ts]*1000;
+    s[`time]:-10957D+`timestamp$1000000000*s[`time]];
+  .kfk.stats,::enlist s;
+  delete from `.kfk.stats where i<count[.kfk.stats]-100;}
 
 // logger callback(rd_kafka_conf_set_log_cb)
 logcb:{[level;fac;buf] show -3!(level;fac;buf);}
@@ -110,6 +113,12 @@ drcb:{[cid;msg]}
 
 // CONSUMER: offset commit callback(rd_kafka_conf_set_offset_commit_cb)
 offsetcb:{[cid;err;offsets]}
+
+// throttle callback(rd_kafka_conf_set_throttle_cb)
+throttlecb:{[cid;brokernm;brokerid;throttle_tm]}
+
+// error callback function(rf_kafka_conf_set_error_cb)
+errorcb:{[cid;err;reason]show(cid;err;reason)}
 
 // Main callback for consuming messages(including errors)
 consumecb:{[msg]}
