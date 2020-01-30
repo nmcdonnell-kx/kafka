@@ -14,3 +14,23 @@ EXP K4(kfkPub){
     return krr((S) rd_kafka_err2str(rd_kafka_last_error()));
   return KNL;
 }
+
+// Wait until all outstanding producer requests are completed to ensure
+// that the all messages have been processed prior to destroying a producer
+EXP K2(kfkFlush){
+  rd_kafka_t *rk;
+  I qy=0;
+  if(!checkType("i[hij]",x,y))
+    return KNL;
+  if(!(rk= clientIndex(x)))
+    return KNL;
+  SW(y->t){
+    CS(-KH,qy=y->h);
+    CS(-KI,qy=y->i);
+    CS(-KJ,qy=y->j);
+  }
+  rd_kafka_resp_err_t err= rd_kafka_flush(rk,qy);
+  if(KFK_OK != err)
+    return krr((S) rd_kafka_err2str(err));
+  return KNL;
+}

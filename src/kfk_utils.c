@@ -12,26 +12,6 @@ EXP K kfkVersion(K UNUSED(x)){return ki(rd_kafka_version());}
 // Returns the human readable librdkafka version
 EXP K kfkVersionSym(K UNUSED(x)){return ks((S)rd_kafka_version_str());}
 
-// Wait until all outstanding producer requests are completed to ensure
-// that the all messages have been processed prior to destroying a producer
-EXP K2(kfkFlush){
-  rd_kafka_t *rk;
-  I qy=0;
-  if(!checkType("i[hij]",x,y))
-    return KNL;
-  if(!(rk= clientIndex(x)))
-    return KNL;
-  SW(y->t){
-    CS(-KH,qy=y->h);
-    CS(-KI,qy=y->i);
-    CS(-KJ,qy=y->j);
-  }
-  rd_kafka_resp_err_t err= rd_kafka_flush(rk,qy);
-  if(KFK_OK != err)
-    return krr((S) rd_kafka_err2str(err));
-  return KNL;
-}
-
 // Current length of producer queue, these are the messages
 // waiting to be sent to, or acknowledged by, a broker.
 EXP K1(kfkOutQLen){
