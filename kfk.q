@@ -113,8 +113,8 @@ PARTITION_UA:-1i
 // taken from librdkafka.h
 OFFSET.BEGINNING: -2     /**< Start consuming from beginning of kafka partition queue: oldest msg */
 OFFSET.END:       -1     /**< Start consuming from end of kafka partition queue: next msg */
-OFFSET.STORED:	  -1000  /**< Start consuming from offset retrieved from offset store */
-OFFSET.INVALID:	  -1001  /**< Invalid offset */
+OFFSET.STORED:    -1000  /**< Start consuming from offset retrieved from offset store */
+OFFSET.INVALID:   -1001  /**< Invalid offset */
 
 
 // Producer client code
