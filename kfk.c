@@ -11,6 +11,12 @@
 #define K4(f) K f(K x,K y,K z,K r)
 #define KR -128
 #define KNL (K) 0
+#define KFK_OK RD_KAFKA_RESP_ERR_NO_ERROR
+#ifdef __GNUC__
+#define UNUSED(x) x __attribute__((__unused__))
+#else
+#define UNUSED(x) x
+#endif
 
 #ifdef _WIN32
 #pragma comment(lib, "ws2_32.lib")
@@ -22,13 +28,6 @@ static SOCKET spair[2];
 #define EXP
 #define SOCKET_ERROR -1
 static int spair[2];
-#endif
-
-#define KFK_OK RD_KAFKA_RESP_ERR_NO_ERROR
-#ifdef __GNUC__
-#  define UNUSED(x) x __attribute__((__unused__))
-#else
-#  define UNUSED(x) x
 #endif
 
 typedef unsigned int UI;
