@@ -43,6 +43,8 @@ funcs:(
 	(`kfkPositionOffsets;3);
 	  // .kfk.CommittedOffsets[client_id:i;topic:s;partition_offsets:I!J]:partition_offsets
 	(`kfkCommittedOffsets;3);
+	  // .kfk.Assign[client_id:i;topics:[sS];partitions:I!J]:()
+	(`kfkAssign;2);
 	  // .kfk.AssignOffsets[client_id:i;topic:s;partition_offsets:I!J]:()
 	(`kfkAssignOffsets;3);
           // .kfk.Threadcount[]:i
@@ -51,7 +53,11 @@ funcs:(
         (`kfkVersionSym;1);
           // .kfk.SetLoggerLevel[client_id:i;int_level:i]:()
         (`kfkSetLoggerLevel;2);
+	  // .kfk.Assignment[client_id:i]:xD
+	(`kfkAssignment;1);
+	  // .kfk.ConsumeStart[client_id:i;topic:[iI];partition:[jJ]]:()
 	(`kfkConsumeStart;3);
+	  // .kfk.ConsumeStop[client_id:i;topic:i]:()
 	(`kfkConsumeStop;2)
 	);
 
@@ -72,6 +78,13 @@ osetp:{[cf;x;y;z]cf[x;y;$[99h=type z;z;("i"$z,())!count[z]#0]]}
 // Allow Offset functionality to take topics as a list in z argument
 CommittedOffsets:osetp[CommittedOffsets;;]
 PositionOffsets :osetp[PositionOffsets;;]
+
+// Stop consumption from specified topics and associated partitions
+ConsumerStop:{[x;y]
+  // Current assignment definition
+  assign:(,'/)Assignment x;
+  dict:key[p]!assign[`partition]@value p:group assign`topic;
+  dict}
 
 // Unassigned partition.
 // The unassigned partition is used by the producer API for messages
@@ -100,9 +113,12 @@ stats:()
 
 // statistics provided by kafka about current state (rd_kafka_conf_set_stats_cb)
 statcb:{[j]
-	s:.j.k j;if[all `ts`time in key s;s[`ts]:-10957D+`timestamp$s[`ts]*1000;s[`time]:-10957D+`timestamp$1000000000*s[`time]];
-	.kfk.stats,::enlist s;
-	delete from `.kfk.stats where i<count[.kfk.stats]-100;}
+  s:.j.k j;
+  if[all `ts`time in key s;
+    s[`ts]:-10957D+`timestamp$s[`ts]*1000;
+    s[`time]:-10957D+`timestamp$1000000000*s[`time]];
+  .kfk.stats,::enlist s;
+  delete from `.kfk.stats where i<count[.kfk.stats]-100;}
 
 // logger callback(rd_kafka_conf_set_log_cb)
 logcb:{[level;fac;buf] show -3!(level;fac;buf);}
