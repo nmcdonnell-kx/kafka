@@ -1,7 +1,8 @@
-// This file contains all the functions used to decode information from Kafka->q
-// across each of the relevant api sections
+/* --- Decode functions ---
+ * The functions contained in this file are used to convert
+ * topic/partition lists, metadata and messaged from kakfa
+*/
 
-// metadata api
 // rd_kafka_metadata_broker: `id`host`port!(id;host;port)
 K decodeMetaBroker(rd_kafka_metadata_broker_t *x){
   return xd("id", ki(x->id), "host", ks(x->host), "port", ki(x->port));
@@ -29,8 +30,8 @@ K decodeMetaTopic(rd_kafka_metadata_topic_t *t){
             "err",ks((S) rd_kafka_err2str(t->err)),"partitions", x);
 }
 
-// rd_kafka_metadata: `brokers`topics`orig_broker_id`orig_broker_name!(broker
-// list;topic list;int;string)
+// rd_kafka_metadata: 
+// `brokers`topics`orig_broker_id`orig_broker_name!(brokerlist;topic list;int;string)
 K decodeMeta(const rd_kafka_metadata_t *meta) {
   K x= ktn(0, 0);
   J i;

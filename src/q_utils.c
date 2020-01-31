@@ -1,6 +1,9 @@
-// This file contains general use C utility functions for interacting with q objects.
+/* The functions contained in this file are general
+ * use utilities for writing C code to interact with
+ * k objects within the C api
+*/
 
-// create dictionary q dictionary from list of items (s1;v1;s2;v2;...)
+// create q dictionary from list of items (s1;v1;s2;v2;...)
 K xd0(I n, ...){
   va_list a;
   S s;

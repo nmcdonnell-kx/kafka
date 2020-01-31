@@ -1,6 +1,6 @@
 /* --- Producer api ---
  * Function which is used to publish data from a client
- * to kafka main thread.
+ * to kafka main thread and ensure publishing is completed
 */
 
 // producer api
@@ -33,4 +33,4 @@ EXP K2(kfkFlush){
   if(KFK_OK != err)
     return krr((S) rd_kafka_err2str(err));
   return KNL;
-}
+

@@ -1,3 +1,8 @@
+/* --- Offset api ---
+ * The functions in this file handle the assignment,
+ * commitment and control of position offsetting functionality
+*/
+
 // https://github.com/edenhill/librdkafka/wiki/Manually-setting-the-consumer-start-offset
 EXP K3(kfkAssignOffsets){
   rd_kafka_t *rk;
