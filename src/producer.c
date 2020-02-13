@@ -33,4 +33,4 @@ EXP K2(kfkFlush){
   if(KFK_OK != err)
     return krr((S) rd_kafka_err2str(err));
   return KNL;
-
+}

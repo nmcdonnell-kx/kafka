@@ -6,6 +6,8 @@
 
 // Used in the assignment of topic/partitions pairs from which to assign consumption
 static V ptlist(K dict, rd_kafka_topic_partition_list_t *t_partition);
+// Used in the deletion of assignments from topic/partitions list
+static V ptlistdel(K dict, rd_kafka_topic_partition_list_t *t_partition);
 // Used for subscription calls, same as above but with ability to define offset
 static V plistoffsetdict(K topic,K partitions,rd_kafka_topic_partition_list_t *t_partition);
 
@@ -96,6 +98,42 @@ EXP K2(kfkAssign){
   return KNL;
 }
 
+EXP K2(kfkAssignAdd){
+  rd_kafka_t *rk;
+  rd_kafka_topic_partition_list_t *t;
+  rd_kafka_resp_err_t err;
+  if(!checkType("i", x))
+    return KNL;
+  if(!(rk= clientIndex(x)))
+    return KNL;
+  // retrieve the current assignment
+  if(KFK_OK != (err=rd_kafka_assignment(rk, &t)))
+    return krr((S)rd_kafka_err2str(err));
+  ptlist(y,t);
+  if(KFK_OK != (err=rd_kafka_assign(rk,t)))
+    return krr((S) rd_kafka_err2str(err));
+  rd_kafka_topic_partition_list_destroy(t);
+  return 0;
+}
+
+EXP K2(kfkAssignDel){
+  rd_kafka_t *rk;
+  rd_kafka_topic_partition_list_t *t;
+  rd_kafka_resp_err_t err;
+  if(!checkType("i", x))
+    return KNL;
+  if(!(rk= clientIndex(x)))
+    return KNL;
+  // retrieve the current assignment
+  if(KFK_OK != (err=rd_kafka_assignment(rk, &t)))
+    return krr((S)rd_kafka_err2str(err));
+  ptlistdel(y,t);
+  if(KFK_OK != (err=rd_kafka_assign(rk,t)))
+    return krr((S) rd_kafka_err2str(err));
+  rd_kafka_topic_partition_list_destroy(t);
+  return 0;
+}
+
 // Return the current consumption assignment for a specified client
 EXP K1(kfkAssignment){
   K r;
@@ -121,6 +159,16 @@ static V ptlist(K dict, rd_kafka_topic_partition_list_t *t_partition){
     dv = kK(kK(dict)[1])[i];
     for(j = 0; j < dv->n; j++)
       rd_kafka_topic_partition_list_add(t_partition,kS(dk)[i],kJ(dv)[j]);
+  }
+}
+
+static V ptlistdel(K dict,rd_kafka_topic_partition_list_t *t_partition){
+  K dk=kK(dict)[0],dv=knk(0);
+  J i,j;
+  for(i = 0; i < dk->n; i++){
+    dv = kK(kK(dict)[1])[i];
+    for(j = 0; j < dv->n; j++)
+      rd_kafka_topic_partition_list_del(t_partition,kS(dk)[i],kJ(dv)[j]);
   }
 }
 
@@ -178,10 +226,10 @@ EXP K3(kfkPoll){
 EXP K kfkCallback(I d){
   char buf[1024];J i,n,consumed=0;
   /*MSG_DONTWAIT - set in sd1(-h,...) */
-  while(0 < (n=recv(d, buf, sizeof(buf), 0)))
+  while(0 < (n = recv(d, buf, sizeof(buf), 0)))
     consumed+=n;
   // pass consumed to poll for possible batching
-  for(i= 0; i < clients->n; i++)
+  for(i = 0; i < clients->n; i++)
     pollClient((rd_kafka_t*)kS(clients)[i], 0, consumed);
   return KNL;
 }
@@ -198,10 +246,10 @@ EXP K3(kfkConsumeStart){
   rd_kafka_topic_t *rkt;
   if(!checkType("iij", x, y, z))
     return KNL;
-  if(!(rkt= topicIndex(x)))
+  if(!(rkt = topicIndex(x)))
     return KNL;
-  if(!(0==rd_kafka_consume_start(rkt,y->i,z->j)))
-    return krr((S) rd_kafka_err2str(rd_kafka_last_error()));
+  if(!(0 == rd_kafka_consume_start(rkt,y->i,z->j)))
+    return krr((S)rd_kafka_err2str(rd_kafka_last_error()));
   return KNL;
 }
 
@@ -209,9 +257,9 @@ EXP K2(kfkConsumeStop){
   rd_kafka_topic_t *rkt;
   if(!checkType("ii", x, y))
     return KNL;
-  if(!(rkt= topicIndex(x)))
+  if(!(rkt = topicIndex(x)))
     return KNL;
-  if(!(0==rd_kafka_consume_stop(rkt,y->i)))
+  if(!(0 == rd_kafka_consume_stop(rkt,y->i)))
     return KNL;
   return KNL;
 }
