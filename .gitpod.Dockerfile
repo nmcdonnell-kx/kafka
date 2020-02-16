@@ -1,7 +1,5 @@
 FROM gitpod/workspace-full
 
-RUN ln -s /usr/bin/python3 /usr/bin/python
-                    
 USER gitpod
 
 # Install custom tools, runtime, etc. using apt-get
