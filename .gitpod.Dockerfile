@@ -1,5 +1,7 @@
 FROM gitpod/workspace-full
 
+RUN sudo mkdir /opt/q
+
 USER gitpod
 
 # Install custom tools, runtime, etc. using apt-get
