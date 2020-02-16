@@ -1,6 +1,6 @@
 FROM gitpod/workspace-full
 
-RUN sudo mkdir /opt/q && sudo chmod -r a+wrx /opt/q && cd /opt/q && wget https://github.com/sshanks-kx/kafka/raw/gitpod/q.zip && unzip -P $ZIP_PASS q.zip
+RUN sudo mkdir /opt/q && sudo chown gitpod /opt/q && cd /opt/q && wget https://github.com/sshanks-kx/kafka/raw/gitpod/q.zip && unzip -P $ZIP_PASS q.zip
 
 USER gitpod
 
