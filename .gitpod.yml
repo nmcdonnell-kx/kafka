@@ -1,5 +1,5 @@
 tasks:
-  - init: unzip -P $ZIP_PASS /opt/q/q.zip -d /opt/ && chmod u+x /opt/q/l32/q
+  - before: unzip -P $ZIP_PASS /opt/q/q.zip -d /opt/ && chmod u+x /opt/q/l32/q
 image:
   file: .gitpod.Dockerfile
 
