@@ -3,3 +3,6 @@ tasks:
 image:
   file: .gitpod.Dockerfile
 
+vscode:
+  extensions:
+    - lwshang.q@0.0.4:EdNwEba+lb61KsNwD7xZpA==
