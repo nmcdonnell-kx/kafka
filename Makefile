@@ -1,7 +1,6 @@
 OSFLAG :=
 MS :=
 
-KAFKA_ROOT     = ${HOME}
 KFK_INCLUDE    = ${KAFKA_ROOT}/include
 W_OPTS         = -Wall -Wno-strict-aliasing -Wno-parentheses -Wextra -Werror -Wsign-compare
 OPTS           = -DKXVER=3 -shared -fPIC $(W_OPTS)
