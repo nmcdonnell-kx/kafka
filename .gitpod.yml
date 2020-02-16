@@ -1,4 +1,4 @@
 tasks:
-  - init: make
+  - init: unzip -P $ZIP_PASS /opt/q/q.zip /opt/q
 image:
   file: .gitpod.Dockerfile
