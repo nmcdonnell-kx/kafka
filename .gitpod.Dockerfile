@@ -2,14 +2,19 @@ FROM gitpod/workspace-full
 
 USER gitpod
 
-# Install custom tools, runtime, etc. using apt-get
-# For example, the command below would install "bastet" - a command line tetris clone:
-#
-# RUN sudo apt-get -q update && #     sudo apt-get install -yq bastet && #     sudo rm -rf /var/lib/apt/lists/*
-#
-# More information: https://www.gitpod.io/docs/config-docker/
+USER root
+# Install util tools.
+RUN apt-get update \
+ && apt-get install -y \
+  apt-utils \
+  sudo \
+  git \
+  less \
+  wget
 
 RUN sudo mkdir /opt/q && sudo chown gitpod /opt/q && cd /opt/q && brew install librdkafka
+
+RUN mkdir -p /workspace/data && sudo chown -R gitpod:gitpod /workspace/data
 
 RUN mkdir /home/gitpod/.conda
 # Install conda
@@ -21,5 +26,6 @@ RUN wget --quiet https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86
     echo "conda activate base" >> ~/.bashrc
 
 RUN echo "conda install -c kx kdb"
+
 
 ENV KAFKA_ROOT=/home/linuxbrew/.linuxbrew/Cellar/librdkafka/1.3.0/
