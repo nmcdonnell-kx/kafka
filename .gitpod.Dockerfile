@@ -25,10 +25,6 @@ RUN wget --quiet https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86
     echo ". /opt/conda/etc/profile.d/conda.sh" >> ~/.bashrc && \
     echo "conda activate base" >> ~/.bashrc
 
-RUN echo "conda install -c kx kdb"
-
-RUN echo "echo QHOME"
-
-RUN echo"chmod u+x $QHOME/l64/q"
+RUN conda install -c kx kdb
 
 ENV KAFKA_ROOT=/home/linuxbrew/.linuxbrew/Cellar/librdkafka/1.3.0/
