@@ -1,6 +1,9 @@
 image:
   file: .gitpod.Dockerfile
 
+tasks:
+- command: chmod +x envconfig.sh
+
 vscode:
   extensions:
     - lwshang.q@0.0.4:EdNwEba+lb61KsNwD7xZpA==
