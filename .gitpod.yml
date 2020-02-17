@@ -1,0 +1,8 @@
+tasks:
+  - before: unzip -P $ZIP_PASS /opt/q/q.zip -d /opt/ && chmod u+x /opt/q/l32/q
+image:
+  file: .gitpod.Dockerfile
+
+vscode:
+  extensions:
+    - lwshang.q@0.0.4:EdNwEba+lb61KsNwD7xZpA==
