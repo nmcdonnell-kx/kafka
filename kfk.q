@@ -156,6 +156,9 @@ logcb:{[level;fac;buf] show -3!(level;fac;buf);}
 // PRODUCER: delivery callback (rd_kafka_conf_set_dr_msg_cb )
 drcb:{[cid;msg]}
 
+errcb:{[int;msg]}
+throttlecb:{[brokernm;brokerid;throttletm]}
+
 // CONSUMER: offset commit callback(rd_kafka_conf_set_offset_commit_cb)
 offsetcb:{[cid;err;offsets]}
 
