@@ -71,3 +71,18 @@ EXP K1(kfkMetadata){
   rd_kafka_metadata_destroy(meta);
   return r;
 }
+
+// Dump rdkafka clients internal state to standard out
+// This is useful for debugging showing stats for brokers, partitions and state
+EXP K1(kfkstateDump){
+  rd_kafka_t *rk;
+  if(!(rk = clientIndex(x)))
+    return KNL;
+  rd_kafka_dump(stdout,rk);
+  return 0;
+}
+
+// Run librdkafka's built in unit tests from within the q session
+EXP K kfkunitTest(K UNUSED(dummy)){
+  return ki(rd_kafka_unittest());
+}

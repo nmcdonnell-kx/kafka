@@ -39,6 +39,10 @@ funcs:(
   (`kfkPoll;3);
     // .kfk.Assign[client_id:i;topics:[sS];partitions:I!J]:()
   (`kfkAssign;2);
+    // .kfk.AssignAdd[client_id:i;topics:[sS];partitions:I!J]:()
+  (`kfkAssignAdd;2);
+    // .kfk.AssignDel[client_id:i;topics:[sS];partitions:I!J]:()
+  (`kfkAssignDel;2);
     // .kfk.Assignment[client_id:i]:xD
   (`kfkAssignment;1);
     // .kfk.ConsumeStart[client_id:i;topic:[iI];partition:[jJ]]:()
@@ -70,7 +74,11 @@ funcs:(
     // .kfk.ExportErr[]:T
   (`kfkExportErr;1);
     // .kfk.OutQLen[client_id:i]:i
-  (`kfkOutQLen;1)
+  (`kfkOutQLen;1);
+    // .kfk.fileDump[client_id:i]:()
+  (`kfkstateDump;1);
+    // .kfk.untiTest[]:()
+  (`kfkunitTest;1)
   );
 
 // binding functions from dictionary funcs using rule
@@ -147,6 +155,9 @@ logcb:{[level;fac;buf] show -3!(level;fac;buf);}
 
 // PRODUCER: delivery callback (rd_kafka_conf_set_dr_msg_cb )
 drcb:{[cid;msg]}
+
+errcb:{[int;msg]}
+throttlecb:{[brokernm;brokerid;throttletm]}
 
 // CONSUMER: offset commit callback(rd_kafka_conf_set_offset_commit_cb)
 offsetcb:{[cid;err;offsets]}
