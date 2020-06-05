@@ -34,6 +34,8 @@ find_library(KAFKA_LIBRARY
     HINTS "$ENV{BUILD_HOME}/lib/" "$ENV{BUILD_HOME}/lib/Win64"
 )
 
+file(DOWNLOAD "https://github.com/KxSystems/kdb/raw/master/c/c/k.h" "${CMAKE_BINARY_DIR}/k.h" )
+
 if (CMAKE_GENERATOR MATCHES "Visual Studio")
     set(INSTALL_SCRIPT "install.bat")
     file(DOWNLOAD "https://github.com/KxSystems/kdb/raw/master/w64/q.lib" "${CMAKE_BINARY_DIR}/q.lib" )
