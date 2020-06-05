@@ -73,6 +73,8 @@ EXP K2(kfkClient){
   rd_kafka_type_t type;
   rd_kafka_t *rk;
   rd_kafka_conf_t *conf;
+  rd_kafka_queue_t *queue;
+  rd_kafka_resp_err_t err;
   char b[512];
   if(!checkType("c!", x, y))
     return KNL;
@@ -95,11 +97,15 @@ EXP K2(kfkClient){
   rd_kafka_set_log_queue(rk,NULL);
   /* Redirect rd_kafka_poll() to consumer_poll() */
   if(type == RD_KAFKA_CONSUMER){
-    rd_kafka_poll_set_consumer(rk);
-    rd_kafka_queue_io_event_enable(rd_kafka_queue_get_consumer(rk),spair[1],"X",1);
+    if(KFK_OK != (err = rd_kafka_poll_set_consumer(rk)))
+      return krr((S)rd_kafka_err2str(err));
+      queue = rd_kafka_queue_get_consumer(rk);
   }
   else
-    rd_kafka_queue_io_event_enable(rd_kafka_queue_get_main(rk),spair[1],"X",1);
+    queue = rd_kafka_queue_get_main(rk);
+  if(!queue)
+    return krr((S)"Error retrieving the queue");
+  rd_kafka_queue_io_event_enable(queue,spair[1],"X",1);
   js(&clients, (S) rk);
   return ki(clients->n - 1);
 }

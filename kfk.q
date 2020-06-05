@@ -131,7 +131,9 @@ Producer:Client[PRODUCER;]
 
 // Consumer client code
 CONSUMER:"c"
-Consumer:Client[CONSUMER;]
+Consumer:{
+  if[not `group.id in key[y];'"Consumers must define a `group.id within their configuration"];
+  .kfk.Client[x;y]}[CONSUMER]
 
 
 // table with kafka statistics
@@ -156,7 +158,8 @@ logcb:{[level;fac;buf] show -3!(level;fac;buf);}
 // PRODUCER: delivery callback (rd_kafka_conf_set_dr_msg_cb )
 drcb:{[cid;msg]}
 
-errcb:{[int;msg]}
+errcb:{[idx;err_num;err_msg;knl]}
+
 throttlecb:{[brokernm;brokerid;throttletm]}
 
 // CONSUMER: offset commit callback(rd_kafka_conf_set_offset_commit_cb)
