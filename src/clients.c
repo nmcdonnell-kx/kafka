@@ -99,7 +99,7 @@ EXP K2(kfkClient){
   if(type == RD_KAFKA_CONSUMER){
     if(KFK_OK != (err = rd_kafka_poll_set_consumer(rk)))
       return krr((S)rd_kafka_err2str(err));
-      queue = rd_kafka_queue_get_consumer(rk);
+    queue = rd_kafka_queue_get_consumer(rk);
   }
   else
     queue = rd_kafka_queue_get_main(rk);
