@@ -27,6 +27,7 @@ message(STATUS "KAFKA API : $ENV{BUILD_HOME}")
 
 include_directories (
     $ENV{BUILD_HOME}/include
+    ${CMAKE_BINARY_DIR}
 )
 
 find_library(KAFKA_LIBRARY
