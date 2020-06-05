@@ -83,11 +83,16 @@ Compile, install and move shared object file to appropriate location.
 2. Run the following set of commands to set up the system as outlined
 
 ```bash
-// in kfk source folder
-make
-// move installed `.so` to `$QHOME/<arch>`
+// Create a directory from which to execute cmake command
+mkdir cmake && cd cmake
+
+// Generate and run the makefile
+cmake .. && make
+
+// move created `.so` and approptiate q files to `$QHOME/<arch>`
 make install
-// remove `.so` from kfk source folder
+
+// remove `.so` from cmake source folder
 make clean
 ```
 
