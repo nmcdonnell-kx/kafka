@@ -127,4 +127,15 @@ errcb:{[cid;err_int;reason]}
 /* throttle_time_ms is an integer
 throttlecb:{[cid;broker_name;broker_id;throttle_time_ms]}
 
+// Error codes which may be used in the .kfk.errcb function to control logic in case of failures
+// which librdkafka deems non fatal but which a user may need to control in their application or
+// highlight to a user so they can manage it themselves
+ERR.BAD_MSG:-199
+ERR.FAIL:-196
+ERR.TRANSPORT:-195
+ERR.CRIT_SYS_RESOURCE:-194
+ERR.RESOLVE:-193
+ERR.FS:-189
+ERR.ALL_BROKERS_DOWN:-187
+
 \d .

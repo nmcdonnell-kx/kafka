@@ -172,9 +172,11 @@ static K loadTopConf(rd_kafka_topic_conf_t *conf, K x){
 // y:config dict sym->sym
 EXP K2(kfkClient){
   rd_kafka_type_t type;
+  rd_kafka_resp_err_t err;
   rd_kafka_t *rk;
   rd_kafka_conf_t *conf;
-  char b[512];
+  rd_kafka_queue_t *queue;
+  char errstr[512];
   if(!checkType("c!", x, y))
     return KNL;
   if('p' != xg && 'c' != xg)
@@ -188,19 +190,22 @@ EXP K2(kfkClient){
   rd_kafka_conf_set_offset_commit_cb(conf,offsetcb);
   rd_kafka_conf_set_throttle_cb(conf,throttlecb);
   rd_kafka_conf_set_error_cb(conf,errorcb);
-  if(RD_KAFKA_CONF_OK !=rd_kafka_conf_set(conf, "log.queue", "true", b, sizeof(b)))
-    return krr((S) b);
-  if(!(rk= rd_kafka_new(type, conf, b, sizeof(b))))
-    return krr(b);
+  if(RD_KAFKA_CONF_OK !=rd_kafka_conf_set(conf, "log.queue", "true", errstr, sizeof(errstr)))
+    return krr((S)errstr);
+  if(!(rk= rd_kafka_new(type, conf, errstr, sizeof(errstr))))
+    return krr((S)errstr);
   /* Redirect logs to main queue */
-  rd_kafka_set_log_queue(rk,NULL);
+  if(KFK_OK != (err=rd_kafka_set_log_queue(rk,NULL)))
+    return krr((S)rd_kafka_err2str(err));
   /* Redirect rd_kafka_poll() to consumer_poll() */
   if(type == RD_KAFKA_CONSUMER){
-    rd_kafka_poll_set_consumer(rk);
-    rd_kafka_queue_io_event_enable(rd_kafka_queue_get_consumer(rk),spair[1],"X",1);
+    if(KFK_OK != (err=rd_kafka_poll_set_consumer(rk)))
+      return krr((S)rd_kafka_err2str(err));
+    queue = rd_kafka_queue_get_consumer(rk);
   }
   else
-    rd_kafka_queue_io_event_enable(rd_kafka_queue_get_main(rk),spair[1],"X",1);
+    queue = rd_kafka_queue_get_main(rk);
+  rd_kafka_queue_io_event_enable(queue,spair[1],"X",1);
   js(&clients, (S) rk);
   return ki(clients->n - 1);
 }
