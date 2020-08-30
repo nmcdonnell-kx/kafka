@@ -106,9 +106,15 @@ stats:()
 
 // statistics provided by kafka about current state (rd_kafka_conf_set_stats_cb)
 statcb:{[j]
-	s:.j.k j;if[all `ts`time in key s;s[`ts]:-10957D+`timestamp$s[`ts]*1000;s[`time]:-10957D+`timestamp$1000000000*s[`time]];
-	.kfk.stats,::enlist s;
-	delete from `.kfk.stats where i<count[.kfk.stats]-100;}
+  s:.j.k j;
+  if[not `cgrp in key s;s[`cgrp]:()];
+  if[all `ts`time in key s;
+    s[`ts]:-10957D+`timestamp$s[`ts]*1000;
+    s[`time]:-10957D+`timestamp$1000000000*s[`time]
+    ];
+  .kfk.stats,::enlist s;
+  delete from `.kfk.stats where i<count[.kfk.stats]-100;
+  }
 
 // logger callback(rd_kafka_conf_set_log_cb)
 logcb:{[level;fac;buf] show -3!(level;fac;buf);}
