@@ -21,8 +21,8 @@ funcs:(
 	(`kfkMetadata;1);
 	  // .kfk.Pub[topic_id:i;partid:i;data;key]:_
 	(`kfkPub;4);
-	  // .kfk.PubWithHeaders[client_id:i;topic_id:i;partid:i;data;key;headers]:_
-	(`kfkPubWithHeaders;6);
+	  // .kfk.PubHeaders[client_id:i;topic_id:i;partid:i;data;key;headers;tstamp]:_
+	(`kfkPubHeaders;7);
 	  // .kfk.BatchPub[topic_id:i;partid:i;data;key]:_
 	(`kfkBatchPub;4);
 	  // .kfk.OutQLen[client_id:i]:i
@@ -76,6 +76,9 @@ osetp:{[cf;x;y;z]cf[x;y;$[99h=type z;z;("i"$z,())!count[z]#0]]}
 // Allow Offset functionality to take topics as a list in z argument
 CommittedOffsets:osetp[CommittedOffsets;;]
 PositionOffsets :osetp[PositionOffsets;;]
+
+// Redefinition of .kfk.PubHeaders to .kfk.PubWithHeaders to avoid recursive defn
+PubWithHeaders:{[cid;tid;pid;data;keyvals;headers]PubHeaders[cid;tid;pid;data;keyvals;headers;"j"$.z.p]}
 
 // Unassigned partition.
 // The unassigned partition is used by the producer API for messages

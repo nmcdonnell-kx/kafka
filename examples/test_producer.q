@@ -7,6 +7,7 @@ kfk_cfg:(!) . flip(
   );
 producer:.kfk.Producer[kfk_cfg]
 
+/
 topic1:.kfk.Topic[producer;`test1;()!()]
 topic2:.kfk.Topic[producer;`test2;()!()]
 

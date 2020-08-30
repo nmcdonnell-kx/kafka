@@ -380,10 +380,10 @@ EXP K2(kfkFlush){
 
 #if (RD_KAFKA_VERSION >= 0x000b04ff)
 
-EXP K kfkPubWithHeaders(K clientIdx,K topicIdx,K partition,K val,K key,K hdrs){
+EXP K kfkPubHeaders(K clientIdx,K topicIdx,K partition,K val,K key,K hdrs,K tstamp){
   rd_kafka_t *rk;
   rd_kafka_topic_t *rkt;
-  if(!checkType("iii[CG][CG]!", clientIdx, topicIdx, partition, val, key, hdrs))
+  if(!checkType("iii[CG][CG]!j", clientIdx, topicIdx, partition, val, key, hdrs, tstamp))
     return KNL;
   if(!(rk= clientIndex(clientIdx)))
     return KNL;
@@ -415,6 +415,7 @@ EXP K kfkPubWithHeaders(K clientIdx,K topicIdx,K partition,K val,K key,K hdrs){
                         RD_KAFKA_V_VALUE(kG(val), val->n),
                         RD_KAFKA_V_KEY(kG(key), key->n),
                         RD_KAFKA_V_HEADERS(msghdrs),
+                        RD_KAFKA_V_TIMESTAMP(tstamp->j),
                         RD_KAFKA_V_END);
   if (err)
     return krr((S) rd_kafka_err2str(err));
