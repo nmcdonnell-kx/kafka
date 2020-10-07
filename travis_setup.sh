@@ -10,8 +10,7 @@ elif [ "$TRAVIS_OS_NAME" == "linux" ]; then
   mkdir build && cd build
   git clone https://github.com/edenhill/librdkafka
   cd librdkafka
-  ./configure --install-deps
-  make && make install
+  ./configure && make && make install
   cp -r $HOME/lib/* ./cbuild
   cp -r $HOME/include/* ./cbuild
   cd ../..
